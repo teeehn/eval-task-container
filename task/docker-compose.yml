@@ -3,8 +3,8 @@ services:
     build: .
     container_name: node-python-dev
     volumes:
-      - ${PWD}/workspace:${PWD}/workspace
-    working_dir: ${PWD}/workspace
+      - ./workspace:/workspace
+    working_dir: /workspace
     environment:
       - DOCKER_HOST=tcp://dind:2375
     depends_on:
