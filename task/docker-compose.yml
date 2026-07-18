@@ -1,0 +1,9 @@
+services:
+  devbox:
+    build: .
+    container_name: node-python-dev
+    volumes:
+      - ./workspace:/workspace
+    working_dir: /workspace
+    tty: true
+    stdin_open: true

@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+task/workspace/A/
+task/workspace/B/
+task/repo/
