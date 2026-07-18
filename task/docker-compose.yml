@@ -3,7 +3,25 @@ services:
     build: .
     container_name: node-python-dev
     volumes:
-      - ./workspace:/workspace
-    working_dir: /workspace
+      - ${PWD}/workspace:${PWD}/workspace
+    working_dir: ${PWD}/workspace
+    environment:
+      - DOCKER_HOST=tcp://dind:2375
+    depends_on:
+      - dind
     tty: true
     stdin_open: true
+
+  dind:
+    image: docker:27-dind
+    container_name: node-python-dev-dind
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR=
+    volumes:
+      - dind-data:/var/lib/docker
+    tty: true
+    stdin_open: true
+
+volumes:
+  dind-data:

@@ -14,11 +14,25 @@ RUN apt-get update && apt-get install -y \
     unzip \
     vim \
     jq \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 RUN node -v && npm -v && python3 --version
+
+# Enable pnpm (Ghost's package manager) via corepack, bundled with Node 22
+RUN corepack enable pnpm
+
+# --- Docker CLI (talks to the dind sidecar over the network — no local daemon) ---
+RUN install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
+    && chmod a+r /etc/apt/keyrings/docker.asc \
+    && echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+      | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y docker-ce-cli docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/*
 
 # --- Claude Code ---
 RUN curl -fsSL https://claude.ai/install.sh | bash -s 2.1.212
@@ -52,5 +66,4 @@ RUN test -f /root/.mitmproxy/mitmproxy-ca-cert.pem
 RUN cp /root/.mitmproxy/mitmproxy-ca-cert.pem /usr/local/share/ca-certificates/mitmproxy.crt \
     && update-ca-certificates
 
-WORKDIR /workspace
 CMD ["/bin/bash"]
